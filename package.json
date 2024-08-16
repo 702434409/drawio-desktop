@@ -1,5 +1,5 @@
 {
-  "name": "linghui",
+  "name": "draw.io",
   "version": "30.7.5",
   "description": "linghui desktop",
   "exports": "./src/main/electron.js",

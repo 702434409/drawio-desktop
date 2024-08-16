@@ -350,6 +350,8 @@ app.whenReady().then(() =>
 				'Content-Security-Policy': ['default-src \'self\'; script-src \'self\' \'sha256-f6cHSTUnCvbQqwa6rKcbWIpgN9dLl0ROfpEKTQUQPr8=\' \'sha256-6g514VrT/cZFZltSaKxIVNFF46+MFaTSDTPB8WfYK+c=\' \'sha256-ZQ86kVKhLmcnklYAnUksoyZaLkv7vvOG9cc/hBJAEuQ=\'; connect-src \'self\'' +
 				(isGoogleFontsEnabled? ' https://fonts.googleapis.com https://fonts.gstatic.com' : '') + '; img-src * data:; media-src *; font-src *; frame-src \'none\'; style-src \'self\' \'unsafe-inline\'' +
 				(isGoogleFontsEnabled? ' https://fonts.googleapis.com' : '') + '; base-uri \'none\';child-src \'self\';object-src \'none\';']
+				
+				
 			}
 		})
 	});
@@ -460,7 +462,7 @@ app.whenReady().then(() =>
 			.option('--svg-links-target <target>',
 				'Target of links in the exported SVG image (auto [default], new-win, same-win)', linkTargetRegExp, 'auto')
 			.option('--enable-plugins',
-				'Enable Plugins')
+				'Enable Plugins',true)
 	        .parse(argv)
 	}
 	catch(e)
@@ -1023,6 +1025,14 @@ app.whenReady().then(() =>
 		label: 'Check for updates',
 		click: checkForUpdatesFn
 	}
+	let reload = {
+		label: 'Reload',
+		click: function(e){
+			// win.loadURL(win.webContents.getURL()+"&a=1");
+			win.reload()
+			// console.info(frame);
+		}
+	}
 
 	let zoomIn = {
 		label: 'Zoom In',
@@ -1058,6 +1068,7 @@ app.whenReady().then(() =>
 	          click() { shell.openExternal('https://github.com/jgraph/drawio-desktop/issues'); }
 			},
 			checkForUpdates,
+			reload,
 	        { type: 'separator' },
 			resetZoom,
 			zoomIn,
