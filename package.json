@@ -1,7 +1,7 @@
 {
-  "name": "draw.io",
-  "version": "24.7.5",
-  "description": "draw.io desktop",
+  "name": "linghui",
+  "version": "30.7.5",
+  "description": "linghui desktop",
   "exports": "./src/main/electron.js",
   "type": "module",
   "main": "src/main/electron.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:jgraph/drawio-desktop.git"
+    "url": "git@github.com:702434409/drawio-desktop.git"
   },
   "keywords": [
     "draw.io",
@@ -31,9 +31,8 @@
   "author": "JGraph <support@draw.io>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/jgraph/drawio-desktop/issues"
+    
   },
-  "homepage": "https://github.com/jgraph/drawio",
   "dependencies": {
     "commander": "^12.1.0",
     "compression": "^1.7.4",

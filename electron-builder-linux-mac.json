@@ -17,8 +17,6 @@
   "mac": {
   	"hardenedRuntime": true,
   	"gatekeeperAssess": false,
-  	"entitlements": "build/entitlements.mac.plist",
-  	"entitlementsInherit": "build/entitlements.mac.plist",
     "category": "public.app-category.graphics-design",
     "target": [
       { "target": "zip", "arch": [
@@ -34,8 +32,8 @@
       }
     ]
   },
-  "afterSign": "build/notarize.cjs",
-  "afterPack": "build/fuses.cjs",
+
+
   "dmg": {
   },
   "linux": {
