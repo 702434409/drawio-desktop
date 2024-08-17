@@ -1033,6 +1033,17 @@ app.whenReady().then(() =>
 			// console.info(frame);
 		}
 	}
+	let openCustomIcon = {
+		label: 'Open Custom Icon',
+		click: function(e){
+			const directoryPath = path.join(getAppDataFolder(), '/icons/');
+			if (!fs.existsSync(directoryPath)) //Usually this dir already exists
+			{
+				fs.mkdirSync(directoryPath);
+			}
+			shell.openPath(directoryPath);
+		}
+	}
 
 	let zoomIn = {
 		label: 'Zoom In',
@@ -1069,6 +1080,7 @@ app.whenReady().then(() =>
 			},
 			checkForUpdates,
 			reload,
+			openCustomIcon,
 	        { type: 'separator' },
 			resetZoom,
 			zoomIn,
@@ -2404,6 +2416,26 @@ async function showSaveDialog(defaultPath, filters)
 		filters: filters
 	});
 };
+async function loadCustomIcon()
+{
+	var pluginsDir = path.join(getAppDataFolder(), '/icons');
+	
+	if (!fs.existsSync(pluginsDir))
+	{
+		return [];
+	}
+	var ret = [];
+
+	fs.readdirSync(pluginsDir).forEach(file => {
+		let fullPath = path.join(pluginsDir, file);
+		let stat = fs.lstatSync(fullPath);
+		if (!stat.isDirectory()) {
+			var iconTxt = fs.readFileSync(fullPath, 'utf8');
+			ret.push(iconTxt);
+		} 
+	  });
+	return ret;
+}
 
 async function installPlugin(filePath)
 {
@@ -2634,6 +2666,9 @@ ipcMain.on("rendererReq", async (event, args) =>
 			ret = await showSaveDialog(args.defaultPath, args.filters);
 			ret = ret.canceled? null : ret.filePath;
 			dialogOpen = false;
+			break;
+		case 'loadCustomIcon':
+			ret = await loadCustomIcon();
 			break;
 		case 'installPlugin':
 			ret = await installPlugin(args.filePath);
