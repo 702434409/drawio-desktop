@@ -198,6 +198,7 @@ function createWindow (opt = {})
 
 	//Cannot be read before app is ready
 	queryObj['appLang'] = app.getLocale();
+	queryObj['dev'] = "1";
 
 	let ourl = url.format(
 	{
@@ -1044,6 +1045,65 @@ app.whenReady().then(() =>
 			shell.openPath(directoryPath);
 		}
 	}
+	let importSvgIcon = {
+		label: 'Import Svg Icon',
+		click: function(e){
+			dialog.showOpenDialog({
+                title:'请选择你的SVG文件',
+                defaultPath:'',//默认打开的文件路径选择
+                filters:[{ //过滤掉你不需要的文件格式
+                    name:'svg'
+                }],
+            }).then(res=>{
+				var fullPath = res.filePaths[0];
+				let stat = fs.lstatSync(fullPath);
+				if (!stat.isDirectory() && fullPath.endsWith("svg")) {
+					var svgTxt = fs.readFileSync(fullPath, 'utf8');
+					var svgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgTxt)));
+					var iconTxt = [];
+					var id = new Date().getTime()+"";
+					iconTxt.push(`<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="${id}" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=`);
+					iconTxt.push(svgBase64);
+					iconTxt.push(`" vertex="1" parent="1"><mxGeometry width="60" height="60" as="geometry"/></mxCell></root></mxGraphModel>`)
+					const directoryPath = path.join(getAppDataFolder(), '/icons/');
+					if (!fs.existsSync(directoryPath)) //Usually this dir already exists
+					{
+						fs.mkdirSync(directoryPath);
+					}
+					fs.writeFileSync(path.join(directoryPath,path.basename(fullPath).replace(path.extname(fullPath),".xml")),iconTxt.join(""));
+					dialog.showMessageBox(
+						{
+							type: 'info',
+							title: 'Import Result',
+							message: 'Import success!Effective after refreshing',
+						});
+				}else{
+					dialog.showMessageBox(
+						{
+							type: 'error',
+							title: 'Import Error',
+							message: 'Path is directory or File is not svg file',
+						});
+				}
+
+
+            }).catch(req=>{
+                console.log(req);
+				dialog.showMessageBox(
+					{
+						type: 'error',
+						title: 'Import Error',
+						message: req.message,
+					});
+            })
+			// const directoryPath = path.join(getAppDataFolder(), '/icons/');
+			// if (!fs.existsSync(directoryPath)) //Usually this dir already exists
+			// {
+			// 	fs.mkdirSync(directoryPath);
+			// }
+			// shell.openPath(directoryPath);
+		}
+	}
 
 	let zoomIn = {
 		label: 'Zoom In',
@@ -1081,6 +1141,7 @@ app.whenReady().then(() =>
 			checkForUpdates,
 			reload,
 			openCustomIcon,
+			importSvgIcon,
 	        { type: 'separator' },
 			resetZoom,
 			zoomIn,
@@ -2429,7 +2490,7 @@ async function loadCustomIcon()
 	fs.readdirSync(pluginsDir).forEach(file => {
 		let fullPath = path.join(pluginsDir, file);
 		let stat = fs.lstatSync(fullPath);
-		if (!stat.isDirectory()) {
+		if (!stat.isDirectory() && file.endsWith("xml")) {
 			var iconTxt = fs.readFileSync(fullPath, 'utf8');
 			ret.push(iconTxt);
 		} 
