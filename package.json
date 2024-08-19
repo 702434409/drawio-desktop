@@ -1,6 +1,6 @@
 {
   "name": "draw.io",
-  "version": "36.7.5",
+  "version": "40.7.5",
   "description": "linghui desktop",
   "exports": "./src/main/electron.js",
   "type": "module",
