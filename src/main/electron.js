@@ -1045,6 +1045,13 @@ app.whenReady().then(() =>
 			shell.openPath(directoryPath);
 		}
 	}
+	let openIconfont = {
+		label: 'Open IconFont.com',
+		click: function(e){
+			shell.openExternal('https://www.iconfont.cn/')
+			
+		}
+	}
 	let importSvgIcon = {
 		label: 'Import Svg Icon',
 		click: function(e){
@@ -1142,6 +1149,7 @@ app.whenReady().then(() =>
 			reload,
 			openCustomIcon,
 			importSvgIcon,
+			openIconfont,
 	        { type: 'separator' },
 			resetZoom,
 			zoomIn,
