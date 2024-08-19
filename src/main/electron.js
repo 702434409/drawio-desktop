@@ -45,6 +45,7 @@ contextMenu({
 	showCopyLink: false
 });
 
+process.env.DRAWIO_ENV = "dev";
 const __DEV__ = process.env.DRAWIO_ENV === 'dev'
 		
 let windowsRegistry = []
@@ -198,7 +199,7 @@ function createWindow (opt = {})
 
 	//Cannot be read before app is ready
 	queryObj['appLang'] = app.getLocale();
-	queryObj['dev'] = "1";
+	// queryObj['dev'] = "0";
 
 	let ourl = url.format(
 	{
@@ -340,22 +341,22 @@ function isPluginsEnabled()
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() =>
 {
-	// Enforce our CSP on all contents
-	session.defaultSession.webRequest.onHeadersReceived((details, callback) => 
-	{
-		callback({
-			responseHeaders: {
-				...details.responseHeaders,
-				// Replace the first sha with the one of the current version shown in the console log (the second one is for the second script block which is rarely changed)
-				// 3rd sha is for electron-progressbar
-				'Content-Security-Policy': ['default-src \'self\'; script-src \'self\' \'sha256-f6cHSTUnCvbQqwa6rKcbWIpgN9dLl0ROfpEKTQUQPr8=\' \'sha256-6g514VrT/cZFZltSaKxIVNFF46+MFaTSDTPB8WfYK+c=\' \'sha256-ZQ86kVKhLmcnklYAnUksoyZaLkv7vvOG9cc/hBJAEuQ=\'; connect-src \'self\'' +
-				(isGoogleFontsEnabled? ' https://fonts.googleapis.com https://fonts.gstatic.com' : '') + '; img-src * data:; media-src *; font-src *; frame-src \'none\'; style-src \'self\' \'unsafe-inline\'' +
-				(isGoogleFontsEnabled? ' https://fonts.googleapis.com' : '') + '; base-uri \'none\';child-src \'self\';object-src \'none\';']
+	// // Enforce our CSP on all contents
+	// session.defaultSession.webRequest.onHeadersReceived((details, callback) => 
+	// {
+	// 	callback({
+	// 		responseHeaders: {
+	// 			...details.responseHeaders,
+	// 			// Replace the first sha with the one of the current version shown in the console log (the second one is for the second script block which is rarely changed)
+	// 			// 3rd sha is for electron-progressbar
+	// 			'Content-Security-Policy': ['default-src \'self\'; script-src \'self\' \'sha256-f6cHSTUnCvbQqwa6rKcbWIpgN9dLl0ROfpEKTQUQPr8=\' \'sha256-6g514VrT/cZFZltSaKxIVNFF46+MFaTSDTPB8WfYK+c=\' \'sha256-ZQ86kVKhLmcnklYAnUksoyZaLkv7vvOG9cc/hBJAEuQ=\'; connect-src \'self\'' +
+	// 			(isGoogleFontsEnabled? ' https://fonts.googleapis.com https://fonts.gstatic.com' : '') + '; img-src * data:; media-src *; font-src *; frame-src \'none\'; style-src \'self\' \'unsafe-inline\'' +
+	// 			(isGoogleFontsEnabled? ' https://fonts.googleapis.com' : '') + '; base-uri \'none\';child-src \'self\';object-src \'none\';']
 				
 				
-			}
-		})
-	});
+	// 		}
+	// 	})
+	// });
 
 	const pluginsCodeUrl = url.pathToFileURL(path.join(getAppDataFolder(), '/plugins/')).href.replace(/\/.\:\//, str => str.toUpperCase());
 
@@ -2493,16 +2494,27 @@ async function loadCustomIcon()
 	{
 		return [];
 	}
-	var ret = [];
-
+	var ret = {CustomIcon:[]};
 	fs.readdirSync(pluginsDir).forEach(file => {
 		let fullPath = path.join(pluginsDir, file);
 		let stat = fs.lstatSync(fullPath);
 		if (!stat.isDirectory() && file.endsWith("xml")) {
 			var iconTxt = fs.readFileSync(fullPath, 'utf8');
-			ret.push(iconTxt);
-		} 
+			ret["CustomIcon"].push(iconTxt);
+		}else if(stat.isDirectory()){
+			//读取下一级
+			ret[file]=[];
+			fs.readdirSync(fullPath).forEach(nextfile => {
+				let fullNextPath = path.join(fullPath, nextfile);
+				let stat = fs.lstatSync(fullNextPath);
+				if (!stat.isDirectory() && nextfile.endsWith("xml")) {
+					var iconTxt = fs.readFileSync(fullNextPath, 'utf8');
+					ret[file].push(iconTxt);
+				}
+			  });
+		}
 	  });
+
 	return ret;
 }
 
