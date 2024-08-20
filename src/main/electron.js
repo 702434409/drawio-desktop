@@ -45,7 +45,7 @@ contextMenu({
 	showCopyLink: false
 });
 
-process.env.DRAWIO_ENV = "dev";
+// process.env.DRAWIO_ENV = "dev";
 const __DEV__ = process.env.DRAWIO_ENV === 'dev'
 		
 let windowsRegistry = []
@@ -199,7 +199,7 @@ function createWindow (opt = {})
 
 	//Cannot be read before app is ready
 	queryObj['appLang'] = app.getLocale();
-	// queryObj['dev'] = "0";
+	queryObj['dev'] = "1";
 
 	let ourl = url.format(
 	{
